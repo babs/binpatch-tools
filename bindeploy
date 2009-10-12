@@ -1,0 +1,63 @@
+#!/bin/sh
+TMPF=$(mktemp binpatch-XXXXXX)
+trap "rm $TMPF" 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15
+mkdir -p /var/db/binpatch/{backup,patches,applied}
+
+update () {
+	if [ x"$BINPATCH_URL" = x ]; then
+		echo "[!] You must define a BINPATCH_URL variable.";
+		exit 2;
+	fi
+    (
+	cd /var/db/binpatch/patches &&
+	wget -qnHc --progress=dot --cut-dirs=3 -l1 -r -A "*.tgz" ${BINPATCH_URL}
+    );
+}
+
+upgrade () {
+    for F in /var/db/binpatch/patches/*.tgz; do
+	if [ "$F" = "/var/db/binpatch/patches/*.tgz" ]; then
+	    echo "[!] No files, maybe you need an update before.";
+	    exit 1;
+	    break;
+	fi
+	FNAME=$(basename "$F")
+	echo "[+] Patch $FNAME"
+	if [ -e /var/db/binpatch/applied/$FNAME ]; then
+	    echo "[-] Patch $FNAME already applied."
+	    echo
+	    continue
+	fi
+	if [ -e /var/db/binpatch/backup/$FNAME ]; then
+	    echo '[-] Backup already exists for this patch.'
+	else
+	    echo "[+] Backuping original files."
+	    tar -ztf $F > $TMPF
+	    tar -I $TMPF -C / -zcvf /var/db/binpatch/backup/$FNAME
+	fi
+	echo "[+] Applying patch."
+	tar -zvxf $F -C /
+	touch /var/db/binpatch/applied/$FNAME
+	echo
+    done;
+}
+
+help () {
+    cat <<EOF
+$0 update|upgrade
+  update: fetch all patch from master server
+  upgrade: apply the patch
+--
+Envireonement;
+  BINPATCH_URL: contains your binpatch hosting server
+    ex: http://<YOUR_HOST>/openbsd/$(uname -r)/$(uname -m)/
+EOF
+}
+
+if [ "$1" = "update" ]; then
+    update
+elif [ "$1" = "upgrade" ]; then
+    upgrade
+else
+    help
+fi
