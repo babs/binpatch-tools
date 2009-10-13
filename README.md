@@ -1,20 +1,23 @@
 binpatch-tools
 ==============
 
-Those tools can be use to maintain security patches of OpenBSD in conjunction with binpatch.
+Those tools can be use to maintain security patches of [OpenBSD][openbsd] in conjunction with [binpatch].
 
 Binpatch will help you to create packages containing patched sources binnaries.
-Those tools will help you to generate the binpatch's Makefile and fetch those patches from your server.
+Those tools will help you to generate the binpatch's Makefile and fetch those patches from your hosting server to your OpenBSD box.
+
+[binpatch]: http://github.com/santana/binpatch/
+[openbsd]:  http://www.openbsd.org/
 
 Requirements and usage
 ----------------------
  * genmakefile.py
 
-This is a Makefile maker, all you need is python on your build machine and a ready to run binpatch deployed.
+    This is a Makefile maker, all you need is python on your build machine and a ready to run binpatch deployed.
 
  * bindeploy
 
-This is the "client" side script which will maintain localy applied patches and backup status and also update from your master server the patch list
+    This is the "client" side script which will maintain localy applied patches and backup status and also update from your master server the patch list
 
 
 Usage
@@ -24,14 +27,19 @@ Usage
 Just run it where your binpatch arbo is deployed.
 
  * bindeploy
-   
+
      * update
 
-          This command need a BINPATCH_URL environement variable containing your packages repositories.
- ex: http://my-obsd.patch.server/openbsd/4.5/i386/
+          This command needs a BINPATCH_URL environement variable containing your packages repositories.
+
+		      ex: http://my-obsd.patch.server/openbsd/4.5/i386/
+
+		  An ptionnal environment variable available is BINPATCH_WGET_ARGS which allow you to add your own args to wget.
+
+		      ex: --no-check-certificate
 
      * upgrade
-	 	  
+
 		  This command will apply patches them if needed. (and perform a backup before)
 
 Please note that the patches are not easily revertable, because they are binnaries tarballs ex:

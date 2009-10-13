@@ -10,7 +10,7 @@ update () {
 	fi
     (
 	cd /var/db/binpatch/patches &&
-	wget -qnHc --progress=dot --cut-dirs=3 -l1 -r -A "*.tgz" ${BINPATCH_URL}
+	wget $BINPATCH_WGET_ARGS -nHc --progress=dot -nd -l1 -r -A "*.tgz" ${BINPATCH_URL}
     );
 }
 
@@ -51,6 +51,8 @@ $0 update|upgrade
 Envireonement;
   BINPATCH_URL: contains your binpatch hosting server
     ex: http://<YOUR_HOST>/openbsd/$(uname -r)/$(uname -m)/
+  BINPATCH_WGET_ARGS: contains additionnal arguments for wget
+    ex: --no-check-certificate
 EOF
 }
 
