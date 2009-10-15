@@ -28,13 +28,12 @@ upgrade () {
 	    echo
 	    continue
 	fi
-	if [ -e /var/db/binpatch/backup/$FNAME ]; then
-	    echo '[-] Backup already exists for this patch.'
-	else
-	    echo "[+] Backuping original files."
-	    tar -ztf $F > $TMPF
-	    tar -I $TMPF -C / -zcvf /var/db/binpatch/backup/$FNAME
-	fi
+
+	# If a backup file exists but the patch hasn't been applyed, the backup could have failed
+	echo "[+] Backuping original files."
+	tar -ztf $F > $TMPF
+	tar -I $TMPF -C / -zcvf /var/db/binpatch/backup/$FNAME
+
 	echo "[+] Applying patch."
 	tar -zvxf $F -C /
 	touch /var/db/binpatch/applied/$FNAME
