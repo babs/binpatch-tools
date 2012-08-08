@@ -65,7 +65,7 @@ def convertbuild(modus):
 
 def parsepatch(pname, cat):
 	log.debug('parsepatch: %s\t%s',pname, cat)
-	patch = urllib.urlopen("ftp://ftp.openbsd.org/pub/OpenBSD/patches/%s/%s/%s.patch"%(UNAME[2],cat,pname)).read().replace("        ","\t")
+	patch = urllib.urlopen("http://ftp.openbsd.org/pub/OpenBSD/patches/%s/%s/%s.patch"%(UNAME[2],cat,pname)).read().replace("        ","\t")
 	rfpatch = []
 	patchfound = 0
 	iskernel = 0
@@ -99,8 +99,8 @@ def parsepatch(pname, cat):
 	return ''.join(fl) + "\n\t"+buildlist
 
 def main():
-	errata = urllib.urlopen("http://www.openbsd.org/errata%s.html"%UNAME[2].replace('.','')).read()
-	RE_patches = re.compile("ftp://ftp.openbsd.org/pub/OpenBSD/patches/%s/([^\/]+)/(.+)\.patch"%(UNAME[2]) )
+	errata = urllib.urlopen("http://www.openbsd.org/errata%s.html"%UNAME[2].replace('.','')).read().replace("\r","").replace("\n","")
+	RE_patches = re.compile("http://ftp.openbsd.org/pub/OpenBSD/patches/%s/([^\/]+)/(.+)\.patch"%(UNAME[2]) )
 	plist = []
 	CAT = {}
 	for cat, name in RE_patches.findall(errata):
